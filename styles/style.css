@@ -17,3 +17,9 @@
   background-color: #0E7A81;
   color: white;
 }
+
+.category-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+}
