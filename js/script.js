@@ -1,3 +1,24 @@
+// Show loading spinner
+const showLoading = () => {
+    const loadingContainer = document.getElementById("loading-container");
+    loadingContainer.innerHTML = '<span class="loading loading-ring loading-lg"></span>';
+    loadingContainer.style.display = "flex";
+    loadingContainer.style.justifyContent = "center";
+    loadingContainer.style.alignItems = "center";
+    loadingContainer.style.position = "fixed";
+    loadingContainer.style.top = "0";
+    loadingContainer.style.left = "0";
+    loadingContainer.style.width = "100%";
+    loadingContainer.style.height = "100%";
+};
+
+// Hide loading spinner
+const hideLoading = () => {
+    const loadingContainer = document.getElementById("loading-container");
+    loadingContainer.innerHTML = '';
+    loadingContainer.style.display = "none";
+};
+
 // Function to load all pet cards
 const loadAllCards = () => {
     fetch("https://openapi.programming-hero.com/api/peddy/pets")
@@ -14,20 +35,47 @@ const loadCategoriesPetButton = () => {
         .catch((error) => console.log(error));
 };
 
-// Load category data
+
+// Function to load category data with 4 seconds loading delay
 const loadCategoryPets = (categoryName) => {
+    showLoading();
+    const petsContainer = document.getElementById("all-cards");
+    petsContainer.style.display = "none";
+
     fetch(`https://openapi.programming-hero.com/api/peddy/category/${categoryName}`)
         .then((res) => res.json())
-        .then((data) => displayAllCards(data.data))
-        .catch((error) => console.log(error));
+        .then((data) => {
+            setTimeout(() => {
+                hideLoading();
+                displayAllCards(data.data);
+                petsContainer.style.display = "block";
+            }, 2000);
+        })
+        .catch((error) => {
+            console.error(error);
+            hideLoading();
+            petsContainer.style.display = "block";
+        });
 };
 
 
 // Function to display all pet cards
+
 const displayAllCards = (pets) => {
     const petsContainer = document.getElementById("all-cards");
     const imageClickDisplay = document.getElementById("image-click-display");
     petsContainer.innerHTML = "";
+
+    if(pets.length ==0){
+        petsContainer.innerHTML = `
+        <div class="min-h-screen flex flex-col gap-5 justify-center items-center">
+        <img src="./assets/images/error.webp" alt="#">
+        <h2 class="text-xl font-bold text-center">No Information Available</h2>
+        <p class="text-base font-normal text-center">It is a long established fact that a reader will be distracted by <br> the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a.</p>
+        </div>
+        `;
+        return;
+    }
 
     pets.forEach((pet, index) => {
         const card = document.createElement("div");
@@ -89,22 +137,18 @@ const displayAllCards = (pets) => {
             </div>
         `;
         petsContainer.append(card);
-
         const imgShowButton = document.getElementById(`img-show-${index}`);
         imgShowButton.addEventListener('click', () => {
             imageClickDisplay.insertAdjacentHTML('beforeend', `<img src="${pet.image}" class="w-[140px] h-[100px] object-cover m-2 rounded-md"/> `);
         });
-
     });
-
-
 };
+
 
 // All button display function
 
 const categoriesData = (categories) => {
-    const categoriesButtonContainer  = document.getElementById("catagories-button-container");
-
+    const categoriesButtonContainer = document.getElementById("catagories-button-container");
     categories.forEach((item) => {
         const buttonContainer = document.createElement("div");
         const button = document.createElement("button");
@@ -118,12 +162,9 @@ const categoriesData = (categories) => {
         button.onclick = () => {
             loadCategoryPets(item.category);
         };
-        
 
         buttonContainer.append(button);
         categoriesButtonContainer.append(buttonContainer);
-
-
     });
 };
 
