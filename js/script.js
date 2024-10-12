@@ -14,10 +14,20 @@ const loadCategoriesPetButton = () => {
         .catch((error) => console.log(error));
 };
 
+// Load category data
+const loadCategoryPets = (categoryName) => {
+    fetch(`https://openapi.programming-hero.com/api/peddy/category/${categoryName}`)
+        .then((res) => res.json())
+        .then((data) => displayAllCards(data.data))
+        .catch((error) => console.log(error));
+};
+
+
 // Function to display all pet cards
 const displayAllCards = (pets) => {
     const petsContainer = document.getElementById("all-cards");
     const imageClickDisplay = document.getElementById("image-click-display");
+    petsContainer.innerHTML = "";
 
     pets.forEach((pet, index) => {
         const card = document.createElement("div");
@@ -93,19 +103,26 @@ const displayAllCards = (pets) => {
 // All button display function
 
 const categoriesData = (categories) => {
-    const buttonContainer = document.getElementById("catagories-button-container");
+    const categoriesButtonContainer  = document.getElementById("catagories-button-container");
 
     categories.forEach((item) => {
-        console.log(item);
+        const buttonContainer = document.createElement("div");
         const button = document.createElement("button");
-        button.classList.add('flex', 'gap-2', 'items-center', 'text-xl', 'font-semibold', 'border', 'rounded-xl', 'py-2', 'px-6', 'w-[48%]', 'lg:w-auto');
+        button.classList.add('flex', 'flex-wrap', 'gap-2', 'items-center', 'text-xl', 'font-semibold', 'border', 'rounded-xl', 'py-2', 'px-6', 'w-full', 'lg:w-auto');
 
         button.innerHTML = `
             <img src="${item.category_icon}" alt="${item.category}" class="category-icon" />
             ${item.category}
         `;
 
+        button.onclick = () => {
+            loadCategoryPets(item.category);
+        };
+        
+
         buttonContainer.append(button);
+        categoriesButtonContainer.append(buttonContainer);
+
 
     });
 };
