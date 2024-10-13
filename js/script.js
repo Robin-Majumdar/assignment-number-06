@@ -58,7 +58,52 @@ const loadCategoryPets = (categoryName) => {
         });
 };
 
+const loadDetails = (DetailsId) => {
+    fetch(`https://openapi.programming-hero.com/api/peddy/pet/${DetailsId}`)
+        .then((res) => res.json())
+        .then((data) => showDisplayDetails(data.petData))
+        .catch((error) => console.log(error));
+};
 
+const showDisplayDetails = (petData) => {
+    console.log(petData);
+    const modalContainer = document.getElementById("modal-content");
+
+    modalContainer.innerHTML = `
+            <img class="w-full h-[250px] rounded-md" src="${petData.image}" alt="${petData.name}">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold mt-4 mb-4 text-[#131313]">${petData.pet_name}</h2>
+                    <p>
+                        <strong> Breed:</strong> ${petData.breed}
+                    </p>
+                    <p> 
+                        <strong> Gender:</strong> ${petData.gender}
+                    </p>
+                    <p >
+                        <strong> Vaccinated Status:</strong> ${petData.vaccinated_status}
+                    </p>
+                </div>
+                <div>
+                    <p> 
+                        <strong> Birth:</strong> ${petData.date_of_birth}
+                    </p>
+                    <p> 
+                        <strong> Price:</strong> ${petData.price}
+                    </p>
+                </div>
+            </div>
+            <hr class="mt-4">
+            <div>
+                <h2 class="text-xl font-bold mt-4 mb-4 text-[#131313]">Pet Details Information</h2>
+                
+                <p class=" text-justify"> ${petData.pet_details}</p>
+
+            </div>
+
+    `;
+    document.getElementById("showModalData").click();
+};
 // Function to display all pet cards
 
 const displayAllCards = (pets) => {
@@ -66,7 +111,7 @@ const displayAllCards = (pets) => {
     const imageClickDisplay = document.getElementById("image-click-display");
     petsContainer.innerHTML = "";
 
-    if(pets.length ==0){
+    if (pets.length == 0) {
         petsContainer.innerHTML = `
         <div class="min-h-screen flex flex-col gap-5 justify-center items-center">
         <img src="./assets/images/error.webp" alt="#">
@@ -132,7 +177,7 @@ const displayAllCards = (pets) => {
 
                     </button>
                     <button class="text-xl font-medium py-2 px-4 border rounded-lg text-[#0E7A81] my-button">Adopt</button>
-                    <button class="text-xl font-medium py-2 px-4 border rounded-lg text-[#0E7A81] my-button">Details</button>
+                    <button onclick="loadDetails('${pet.petId}')" class="text-xl font-medium py-2 px-4 border rounded-lg text-[#0E7A81] my-button">Details</button>
                 </div>
             </div>
         `;
